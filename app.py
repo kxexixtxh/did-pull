@@ -4,10 +4,17 @@ from atproto.exceptions import AtProtocolError
 import gspread
 from google.oauth2.service_account import Credentials
 
-# Google Sheets setup
-SERVICE_ACCOUNT_FILE = r'C:\Users\Keith\Documents\Projects\DID\elite-crossbar-461504-j0-1a24652891fd.json'
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-creds = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+
+creds_json = os.environ.get("GOOGLE_CREDS_JSON")
+if creds_json:
+    creds_dict = json.loads(creds_json)
+    creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPES)
+else:
+    # For local testing only — use your local file path here
+    SERVICE_ACCOUNT_FILE = r'C:\Users\Keith\Documents\Projects\DID\elite-crossbar-461504-j0-1a24652891fd.json'
+    creds = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+
 gs_client = gspread.authorize(creds)
 
 spreadsheet_url = 'https://docs.google.com/spreadsheets/d/1tl4vgQGSV5HO2m9C9BO76Ob4vNh9LGz1Qs_7Ql2VqPw/edit?gid=0#gid=0'
